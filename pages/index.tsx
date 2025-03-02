@@ -2,6 +2,6 @@ import React from "react";
 
 export default function Home() {
     return(
-        <h1>Amo você ❤️</h1>
+        <h1>Você é demais! ❤️</h1>
     )
 }
