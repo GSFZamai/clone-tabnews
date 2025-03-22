@@ -9,7 +9,7 @@
     "react-dom": "^18.2.0"
   },
   "scripts": {
-    "dev": "npm run docker:up && next dev",
+    "dev": "npm run services:up && next dev",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
