@@ -1,17 +1,17 @@
-import { Client, QueryConfig, QueryResult } from "pg";
+import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 
 async function query(
   queryObject: string | QueryConfig,
 ): Promise<QueryResult<any>> {
-  const credentials = {
+  const credentials: ClientConfig = {
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
     port: Number(process.env.POSTGRES_PORT),
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
+    ssl: process.env.NODE_ENV === "development" ? false : true,
   };
   const client = new Client(credentials);
-  console.log(credentials);
 
   try {
     await client.connect();
@@ -19,7 +19,7 @@ async function query(
     return result;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   } finally {
     await client.end();
   }
