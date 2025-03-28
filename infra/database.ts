@@ -1,4 +1,5 @@
 import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
+import { ConnectionOptions } from "tls";
 
 async function query(
   queryObject: string | QueryConfig,
@@ -9,7 +10,7 @@ async function query(
     port: Number(process.env.POSTGRES_PORT),
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
-    ssl: process.env.NODE_ENV === "development" ? false : true,
+    ssl: getSSLValues(),
   };
   const client = new Client(credentials);
 
@@ -28,3 +29,13 @@ async function query(
 export default {
   query: query,
 };
+
+function getSSLValues() {
+  if (process.env.POSTGRES_CA) {
+    const connectionOptions: ConnectionOptions = {
+      ca: process.env.POSTGRES_CA,
+    };
+    return connectionOptions;
+  }
+  return process.env.NODE_ENV === "development" ? false : true;
+}
