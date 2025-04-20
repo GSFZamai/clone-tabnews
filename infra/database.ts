@@ -4,18 +4,10 @@ import { ConnectionOptions } from "tls";
 async function query(
   queryObject: string | QueryConfig,
 ): Promise<QueryResult<any>> {
-  const credentials: ClientConfig = {
-    host: process.env.POSTGRES_HOST,
-    password: process.env.POSTGRES_PASSWORD,
-    port: Number(process.env.POSTGRES_PORT),
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DB,
-    ssl: getSSLValues(),
-  };
-  const client = new Client(credentials);
-
+  console.log(process.env.POSTGRES_USER);
+  let client;
   try {
-    await client.connect();
+    client = await getNewDbClient();
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
@@ -26,8 +18,23 @@ async function query(
   }
 }
 
+async function getNewDbClient() {
+  const credentials: ClientConfig = {
+    host: process.env.POSTGRES_HOST,
+    password: process.env.POSTGRES_PASSWORD,
+    port: Number(process.env.POSTGRES_PORT),
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DB,
+    ssl: getSSLValues(),
+  };
+  const client = new Client(credentials);
+  client.connect();
+  return client;
+}
+
 export default {
   query: query,
+  getNewDbClient,
 };
 
 function getSSLValues() {
@@ -37,5 +44,5 @@ function getSSLValues() {
     };
     return connectionOptions;
   }
-  return process.env.NODE_ENV === "development" ? false : true;
+  return process.env.NODE_ENV === "production" ? true : false;
 }

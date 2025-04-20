@@ -1,6 +1,5 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import database from "infra/database";
-import { env } from "process";
 
 export interface StatusResponse {
   updated_at: string;
