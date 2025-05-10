@@ -17,26 +17,29 @@ export default async function migrations(
     verbose: true,
   };
 
-  if (request.method === "GET") {
-    const pendingMigrations = await migrationsRunner(migrationRunnerConfig);
-    await dbClient.end();
+  try {
+    if (request.method === "GET") {
+      const pendingMigrations = await migrationsRunner(migrationRunnerConfig);
 
-    return response.status(200).json(pendingMigrations);
-  }
-
-  if (request.method === "POST") {
-    const migratedMigrations = await migrationsRunner({
-      ...migrationRunnerConfig,
-      dryRun: false,
-    });
-
-    await dbClient.end();
-
-    if (migratedMigrations.length > 0) {
-      return response.status(201).json(migratedMigrations);
+      return response.status(200).json(pendingMigrations);
     }
-    return response.status(200).json(migratedMigrations);
-  }
 
-  return response.status(405).end();
+    if (request.method === "POST") {
+      const migratedMigrations = await migrationsRunner({
+        ...migrationRunnerConfig,
+        dryRun: false,
+      });
+
+      if (migratedMigrations.length > 0) {
+        return response.status(201).json(migratedMigrations);
+      }
+      return response.status(200).json(migratedMigrations);
+    }
+
+    return response.status(405).end();
+  } catch {
+    return response.status(500).end();
+  } finally {
+    await dbClient.end();
+  }
 }
