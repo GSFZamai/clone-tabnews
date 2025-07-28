@@ -11,5 +11,6 @@ const jestConfig = nextJestConfig({
     "^.+\.tsx?$": ["ts-jest", {}],
   },
   moduleDirectories: ["node_modules", "<rootDir>"],
+  testTimeout: 60000,
 });
 module.exports = jestConfig;

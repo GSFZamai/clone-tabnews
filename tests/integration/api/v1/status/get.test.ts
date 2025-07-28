@@ -1,4 +1,9 @@
 import { StatusResponse } from "pages/api/v1/status";
+import orchestrator from "tests/orquestrator.js";
+
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+});
 
 describe("Verify status endpoint", () => {
   it("must make a request to path `api/v1/status` and receives status code 200", async () => {
