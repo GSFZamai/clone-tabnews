@@ -1,11 +1,15 @@
 import database from "infra/database";
 import { StatusResponse } from "pages/api/v1/status";
+import orchestrator from "tests/orquestrator.js";
+
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+  await cleanDatabase();
+});
 
 export async function cleanDatabase() {
   await database.query("drop schema public cascade; create schema public;");
 }
-
-beforeAll(cleanDatabase);
 
 describe("Verifies if the connection is closed after calling DELETE method", () => {
   test("If the the DELETE call to the endpoint migrations returns 405", async () => {

@@ -1,10 +1,14 @@
 import database from "infra/database";
+import orchestrator from "tests/orquestrator.js";
+
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+  await cleanDatabase();
+});
 
 export async function cleanDatabase() {
   await database.query("drop schema public cascade; create schema public;");
 }
-
-beforeAll(cleanDatabase);
 
 test("If the the GET call to the endpoint migrations returns 200", async () => {
   const response: Response = await fetch(
