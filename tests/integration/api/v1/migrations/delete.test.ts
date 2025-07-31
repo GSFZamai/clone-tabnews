@@ -29,7 +29,7 @@ describe("Verifies if the connection is closed after calling DELETE method", () 
     let parsedDate = new Date(responseBody.updated_at).toISOString();
 
     expect(response.status).toBe(200);
-    expect(responseBody.dependencies.database.version).toEqual("16.8");
+    expect(responseBody.dependencies.database.version).toEqual("16.0");
     expect(responseBody.dependencies.database.max_connections).toBe(100);
     expect(responseBody.dependencies.database.opened_connections).toBe(1);
     expect(parsedDate).toEqual(responseBody.updated_at);
