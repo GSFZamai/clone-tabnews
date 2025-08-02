@@ -1,5 +1,4 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
-const { dir } = require("console");
 const nextJest = require("next/jest");
 require("dotenv").config({ path: ".env.development" });
 const nextJestConfig = nextJest({
@@ -8,7 +7,7 @@ const nextJestConfig = nextJest({
 const jestConfig = nextJestConfig({
   testEnvironment: "node",
   transform: {
-    "^.+\.tsx?$": ["ts-jest", {}],
+    "^.+.tsx?$": ["ts-jest", {}],
   },
   moduleDirectories: ["node_modules", "<rootDir>"],
   testTimeout: 60000,
