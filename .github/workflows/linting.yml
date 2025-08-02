@@ -2,7 +2,7 @@ name: Linting
 on: pull_request
 jobs:
   prettier:
-    name: Prettier Lint
+    name: Prettier
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
