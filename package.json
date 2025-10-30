@@ -26,7 +26,8 @@
     "migrations:create": "node-pg-migrate --migrations-dir infra/migrations create",
     "migrations:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up",
     "wait-for-postgres": "node infra/scripts/wait-for-postgres.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "commit": "cz"
   },
   "author": "",
   "license": "MIT",
@@ -38,6 +39,8 @@
     "@types/node": "22.13.8",
     "@types/pg": "^8.11.11",
     "@types/react": "19.0.10",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
     "eslint-config-prettier": "^9.1.0",
@@ -47,5 +50,10 @@
     "prettier": "^3.5.3",
     "ts-jest": "^29.2.6",
     "typescript": "5.8.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
