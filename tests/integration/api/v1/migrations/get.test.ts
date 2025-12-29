@@ -1,4 +1,4 @@
-import orchestrator from "tests/orquestrator.js";
+import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
