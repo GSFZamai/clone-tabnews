@@ -26,10 +26,11 @@ function StatusInfo() {
       refreshInterval: 2000,
     },
   );
-  console.log(data);
 
   if (isLoading) {
-    return <strong>Carregando...</strong>;
+    return (
+      <StatusInfo.Row label="Última atualização:" value={"Carregando..."} />
+    );
   }
 
   if (!isLoading && data) {
@@ -39,7 +40,7 @@ function StatusInfo() {
           label="Última atualização:"
           value={new Date(data.updated_at).toLocaleString("pt-BR")}
         />
-        <StatusInfo.Subtitle text="Dependências" />
+        <StatusInfo.Subtitle text="Banco de dados" />
         <StatusInfo.Row
           label="Versão banco de dados:"
           value={data.dependencies.database.version}
