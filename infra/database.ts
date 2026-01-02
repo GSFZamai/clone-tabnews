@@ -4,7 +4,7 @@ import { ConnectionOptions } from "tls";
 async function query(
   queryObject: string | QueryConfig,
 ): Promise<QueryResult<any>> {
-  let client;
+  let client: Client;
 
   try {
     client = await getNewDbClient();
@@ -12,20 +12,13 @@ async function query(
     return result;
   } catch (error) {
     console.error("Erro Conexão Banco", error);
-    console.log("Credenciais", {
-      host: process.env.POSTGRES_HOST,
-      password: process.env.POSTGRES_PASSWORD,
-      port: Number(process.env.POSTGRES_PORT),
-      user: process.env.POSTGRES_USER,
-      database: process.env.POSTGRES_DB,
-    });
     throw error;
   } finally {
     await client.end();
   }
 }
 
-async function getNewDbClient() {
+async function getNewDbClient(): Client {
   const credentials: ClientConfig = {
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
