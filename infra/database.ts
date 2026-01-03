@@ -14,7 +14,7 @@ async function query(
     console.error("Erro Conexão Banco", error);
     throw error;
   } finally {
-    await client.end();
+    await client?.end();
   }
 }
 
