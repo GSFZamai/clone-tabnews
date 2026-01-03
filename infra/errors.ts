@@ -20,3 +20,23 @@ export class InternalServerError extends Error {
     };
   }
 }
+export class MethodNotAllowedError extends Error {
+  statusCode: number;
+  action: string;
+
+  constructor() {
+    super("Método HTTP não permitido para esse endpoint.");
+    this.statusCode = 405;
+    this.action = "Verifique os métodos HTTP permitidos para esse endpoint.";
+    this.name = "MethodNotAllowedError";
+  }
+
+  toJSON() {
+    return {
+      message: this.message,
+      name: this.name,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
