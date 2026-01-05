@@ -1,5 +1,6 @@
 import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 import { ConnectionOptions } from "tls";
+import { ServicesError } from "./errors";
 
 async function query(
   queryObject: string | QueryConfig,
@@ -11,8 +12,12 @@ async function query(
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.error("Erro Conexão Banco", error);
-    throw error;
+    const serviceError = new ServicesError({
+      cause: error,
+      message: "Falha de conexão ou execução de query no Banco de dados.",
+    });
+
+    throw serviceError;
   } finally {
     await client?.end();
   }
