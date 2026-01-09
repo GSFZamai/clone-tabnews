@@ -23,7 +23,7 @@ async function query(
   }
 }
 
-async function getNewDbClient(): Client {
+async function getNewDbClient(): Promise<Client> {
   const credentials: ClientConfig = {
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
