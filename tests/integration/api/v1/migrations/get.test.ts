@@ -7,7 +7,7 @@ beforeAll(async () => {
 
 describe("GET api/v1/migrations", () => {
   describe("Anonymous user", () => {
-    test("Retrieving pending migrations", async () => {
+    it("Should retrieve pending migrations to run", async () => {
       const response: Response = await fetch(
         "http://localhost:3000/api/v1/migrations",
       );

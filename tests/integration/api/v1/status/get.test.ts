@@ -7,7 +7,7 @@ beforeAll(async () => {
 
 describe("GET api/v1/status", () => {
   describe("Anonymous user", () => {
-    it("Retrieving current server status", async () => {
+    it("Should retrieve the current server status", async () => {
       let response: Response = await fetch(
         "http://localhost:3000/api/v1/status",
       );
