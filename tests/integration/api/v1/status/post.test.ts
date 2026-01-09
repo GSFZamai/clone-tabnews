@@ -6,7 +6,7 @@ beforeAll(async () => {
 
 describe("POST api/v1/status", () => {
   describe("Anonymous user", () => {
-    it("Retrieving current server status", async () => {
+    it("Should respond with MethodNotAllowedError", async () => {
       let response: Response = await fetch(
         "http://localhost:3000/api/v1/status",
         {
