@@ -9,7 +9,9 @@ const migrationRunnerConfig = {
   direction: "up",
   migrationsTable: "pgmigrations",
   dryRun: true,
-  verbose: true,
+  log: (msg) => {
+    msg;
+  },
 } as RunnerOption;
 
 async function listPendingMigrations() {
