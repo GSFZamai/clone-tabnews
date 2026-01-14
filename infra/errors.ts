@@ -43,6 +43,28 @@ export class ServicesError extends Error {
   }
 }
 
+export class ValidationError extends Error {
+  statusCode: number;
+  action: string;
+
+  constructor({ message, action }: { message?: string; action?: string }) {
+    super();
+    this.message = message || "Falha de validação.";
+    this.action = action || "Verifique as informações e tente novamente.";
+    this.name = "ValidationError";
+    this.statusCode = 400;
+  }
+
+  toJSON() {
+    return {
+      message: this.message,
+      name: this.name,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
+
 export class MethodNotAllowedError extends Error {
   statusCode: number;
   action: string;

@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { InternalServerError, MethodNotAllowedError } from "./errors";
+import {
+  InternalServerError,
+  MethodNotAllowedError,
+  ValidationError,
+} from "./errors";
 
 async function onErrorHandler(
   error: unknown,
@@ -10,6 +14,10 @@ async function onErrorHandler(
     cause: error,
     statusCode: undefined,
   };
+
+  if (error instanceof ValidationError) {
+    return response.status(error.statusCode).json(error);
+  }
 
   if (
     typeof error == "object" &&
