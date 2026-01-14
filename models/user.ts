@@ -1,5 +1,5 @@
 import database from "infra/database";
-import { ValidationError } from "infra/errors";
+import { NotFoundError, ValidationError } from "infra/errors";
 
 export type NewUserRequest = {
   username: string;
@@ -14,6 +14,34 @@ export interface User {
   password: string;
   created_at: string;
   updated_at: string;
+}
+
+async function findByUsername(username: string): Promise<User> {
+  const user = await findOneByUsername(username);
+
+  return user;
+  async function findOneByUsername(username: string) {
+    const result = await database.query<User>({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          LOWER(username) = LOWER($1)
+      ;`,
+      values: [username],
+    });
+
+    if (result.rowCount === 0) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado para os dados informados.",
+        action: "Tente outro nome de usuário.",
+      });
+    }
+
+    return result.rows[0];
+  }
 }
 
 async function create(newUserRequest: NewUserRequest): Promise<User> {
@@ -80,6 +108,7 @@ async function create(newUserRequest: NewUserRequest): Promise<User> {
 
 const user = {
   create,
+  findByUsername,
 };
 
 export default user;
