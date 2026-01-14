@@ -47,12 +47,54 @@ export class ValidationError extends Error {
   statusCode: number;
   action: string;
 
-  constructor({ message, action }: { message?: string; action?: string }) {
-    super();
-    this.message = message || "Falha de validação.";
+  constructor({
+    message,
+    action,
+    cause,
+  }: {
+    message?: string;
+    action?: string;
+    cause?: unknown;
+  }) {
+    super(message || "Falha de validação.", {
+      cause,
+    });
     this.action = action || "Verifique as informações e tente novamente.";
     this.name = "ValidationError";
     this.statusCode = 400;
+  }
+
+  toJSON() {
+    return {
+      message: this.message,
+      name: this.name,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
+
+export class NotFoundError extends Error {
+  statusCode: number;
+  action: string;
+
+  constructor({
+    message,
+    action,
+    cause,
+  }: {
+    message?: string;
+    action?: string;
+    cause?: unknown;
+  }) {
+    super(message || "Falha ao encontrar o recurso.", {
+      cause,
+    });
+
+    this.action =
+      action || "Verifique as informações inseridas e tente novamente.";
+    this.name = "NotFoundError";
+    this.statusCode = 404;
   }
 
   toJSON() {
