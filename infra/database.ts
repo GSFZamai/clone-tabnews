@@ -2,9 +2,9 @@ import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 import { ConnectionOptions } from "tls";
 import { ServicesError } from "./errors";
 
-async function query(
+async function query<T>(
   queryObject: string | QueryConfig,
-): Promise<QueryResult<any>> {
+): Promise<QueryResult<T>> {
   let client: Client;
 
   try {
