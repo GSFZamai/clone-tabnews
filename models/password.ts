@@ -2,7 +2,10 @@ import bcryptjs from "bcryptjs";
 
 async function hash(password: string) {
   const rounds = getNumberOfRounds();
-  const hashedPassword = await bcryptjs.hash(password, rounds);
+  const salt = await bcryptjs.genSalt(rounds);
+  const pepper = process.env.PASSWORD_PEPPER;
+  const temper = salt + pepper;
+  const hashedPassword = await bcryptjs.hash(password, temper);
   return hashedPassword;
 }
 
