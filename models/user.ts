@@ -1,5 +1,6 @@
 import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/errors";
+import password from "./password";
 
 export type NewUserRequest = {
   username: string;
@@ -47,6 +48,8 @@ async function findByUsername(username: string): Promise<User> {
 async function create(newUserRequest: NewUserRequest): Promise<User> {
   await verifyExistingEmail(newUserRequest.email);
   await verifyExistingUsername(newUserRequest.username);
+  await hashPasswordInObject(newUserRequest);
+
   const newUser = await insertNewUser(newUserRequest);
   return newUser;
 
@@ -70,6 +73,7 @@ async function create(newUserRequest: NewUserRequest): Promise<User> {
       });
     }
   }
+
   async function verifyExistingUsername(username: NewUserRequest["username"]) {
     const result = await database.query({
       text: `
@@ -90,6 +94,12 @@ async function create(newUserRequest: NewUserRequest): Promise<User> {
       });
     }
   }
+
+  async function hashPasswordInObject(newUserRequest: NewUserRequest) {
+    const hashedPassword = await password.hash(newUserRequest.password);
+    newUserRequest.password = hashedPassword;
+  }
+
   async function insertNewUser({ username, email, password }: NewUserRequest) {
     const queryResult = await database.query<User>({
       text: `
