@@ -34,7 +34,6 @@ async function getHandler(_: NextApiRequest, response: NextApiResponse) {
   const serverVersionResult = await database.query<IServerVersion>(
     "show server_version;",
   );
-  console.log(serverVersionResult);
   const serverVersionValue = serverVersionResult?.rows[0].server_version;
 
   const maxConnectionsResult = await database.query<IMaxConnections>(
