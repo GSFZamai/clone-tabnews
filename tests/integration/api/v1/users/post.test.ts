@@ -11,7 +11,7 @@ beforeAll(async () => {
 
 describe("POST api/v1/users", () => {
   describe("Anonymous user", () => {
-    test("With unique and valid data should create a new user", async () => {
+    test("With unique and valid data", async () => {
       const response: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
@@ -58,7 +58,7 @@ describe("POST api/v1/users", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
 
-    test("With duplicated email should not create a new user", async () => {
+    test("With duplicated email", async () => {
       const firstResponse: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
@@ -102,7 +102,7 @@ describe("POST api/v1/users", () => {
       });
     });
 
-    test("With duplicated username should not create a new user", async () => {
+    test("With duplicated username", async () => {
       const firstResponse: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
