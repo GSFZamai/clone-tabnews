@@ -53,53 +53,6 @@ async function create(newUserRequest: NewUserRequest): Promise<User> {
   const newUser = await insertNewUser(newUserRequest);
   return newUser;
 
-  async function verifyExistingEmail(email: NewUserRequest["email"]) {
-    const result = await database.query({
-      text: `
-        SELECT 
-          email
-        FROM
-          users
-        WHERE
-          LOWER(email) = LOWER($1)
-      ;`,
-      values: [email],
-    });
-
-    if (result.rowCount > 0) {
-      throw new ValidationError({
-        message: "Email já utilizado.",
-        action: "Insira outro email e tente novamente.",
-      });
-    }
-  }
-
-  async function verifyExistingUsername(username: NewUserRequest["username"]) {
-    const result = await database.query({
-      text: `
-        SELECT 
-          username
-        FROM
-          users
-        WHERE
-          LOWER(username) = LOWER($1)
-      ;`,
-      values: [username],
-    });
-
-    if (result.rowCount > 0) {
-      throw new ValidationError({
-        message: "Nome de usuário já utilizado.",
-        action: "Insira outro nome de usuário e tente novamente.",
-      });
-    }
-  }
-
-  async function hashPasswordInObject(newUserRequest: NewUserRequest) {
-    const hashedPassword = await password.hash(newUserRequest.password);
-    newUserRequest.password = hashedPassword;
-  }
-
   async function insertNewUser({ username, email, password }: NewUserRequest) {
     const queryResult = await database.query<User>({
       text: `
@@ -116,9 +69,98 @@ async function create(newUserRequest: NewUserRequest): Promise<User> {
   }
 }
 
+async function update(username: string, userInfo: Partial<NewUserRequest>) {
+  const currentUser = await user.findByUsername(username);
+  const updateUserInfo = { ...currentUser, ...userInfo };
+
+  if ("username" in userInfo) {
+    await verifyExistingUsername(userInfo.username);
+  }
+
+  if ("email" in userInfo) {
+    await verifyExistingEmail(userInfo.email);
+  }
+
+  if ("password" in userInfo) {
+    await hashPasswordInObject(updateUserInfo);
+  }
+
+  const updatedUser = await updateUser(updateUserInfo);
+
+  return updatedUser;
+
+  async function updateUser({ id, username, email, password }: User) {
+    const queryResult = await database.query<User>({
+      text: `
+      UPDATE
+        users
+      SET
+        username = $2,
+        email = $3,
+        password = $4,
+        updated_at = timezone('utc', now())
+      WHERE
+        id = $1
+      RETURNING
+        *
+      ;`,
+      values: [id, username, email, password],
+    });
+    return queryResult.rows[0];
+  }
+}
+
+async function verifyExistingUsername(username: NewUserRequest["username"]) {
+  const result = await database.query({
+    text: `
+        SELECT 
+          username
+        FROM
+          users
+        WHERE
+          LOWER(username) = LOWER($1)
+      ;`,
+    values: [username],
+  });
+
+  if (result.rowCount > 0) {
+    throw new ValidationError({
+      message: "Nome de usuário já utilizado.",
+      action: "Insira outro nome de usuário e tente novamente.",
+    });
+  }
+}
+
+async function verifyExistingEmail(email: NewUserRequest["email"]) {
+  const result = await database.query({
+    text: `
+        SELECT 
+          email
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+      ;`,
+    values: [email],
+  });
+
+  if (result.rowCount > 0) {
+    throw new ValidationError({
+      message: "Email já utilizado.",
+      action: "Insira outro email e tente novamente.",
+    });
+  }
+}
+
+async function hashPasswordInObject(newUserRequest: NewUserRequest) {
+  const hashedPassword = await password.hash(newUserRequest.password);
+  newUserRequest.password = hashedPassword;
+}
+
 const user = {
   create,
   findByUsername,
+  update,
 };
 
 export default user;
