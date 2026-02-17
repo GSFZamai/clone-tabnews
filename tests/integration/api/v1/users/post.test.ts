@@ -1,6 +1,7 @@
 import { version } from "uuid";
-import { NewUserRequest, User } from "models/user";
+import user, { NewUserRequest, User } from "models/user";
 import orchestrator from "tests/orchestrator.js";
+import password from "models/password";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -10,7 +11,7 @@ beforeAll(async () => {
 
 describe("POST api/v1/users", () => {
   describe("Anonymous user", () => {
-    test("With unique and valid data should create a new user", async () => {
+    test("With unique and valid data", async () => {
       const response: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
@@ -33,16 +34,31 @@ describe("POST api/v1/users", () => {
         id: responseBody.id,
         username: "gsfzamai",
         email: "gsfzamai@gmail.com",
-        password: "senha@123",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
+
+      const createdUser = await user.findByUsername("gsfzamai");
+
+      const correctPasswordCompare = await password.compare(
+        "senha@123",
+        createdUser.password,
+      );
+
+      const incorrectPasswordCompare = await password.compare(
+        "SenhaIncorreta",
+        createdUser.password,
+      );
+
+      expect(correctPasswordCompare).toBe(true);
+      expect(incorrectPasswordCompare).toBe(false);
       expect(version(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
 
-    test("With duplicated email should not create a new user", async () => {
+    test("With duplicated email", async () => {
       const firstResponse: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
@@ -86,7 +102,7 @@ describe("POST api/v1/users", () => {
       });
     });
 
-    test("With duplicated username should not create a new user", async () => {
+    test("With duplicated username", async () => {
       const firstResponse: Response = await fetch(
         "http://localhost:3000/api/v1/users",
         {
