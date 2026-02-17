@@ -1,6 +1,6 @@
 import { version } from "uuid";
 import user, { NewUserRequest, User } from "models/user";
-import orchestrator from "tests/orchestrator.js";
+import orchestrator from "tests/orchestrator";
 import password from "models/password";
 
 beforeAll(async () => {
