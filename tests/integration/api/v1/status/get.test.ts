@@ -1,5 +1,5 @@
 import { StatusResponse } from "pages/api/v1/status";
-import orchestrator from "tests/orchestrator.js";
+import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();

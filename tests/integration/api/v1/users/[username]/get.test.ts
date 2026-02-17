@@ -1,4 +1,4 @@
-import { NewUserRequest, User } from "models/user";
+import { User } from "models/user";
 import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
@@ -10,19 +10,9 @@ beforeAll(async () => {
 describe("GET api/v1/users/[username]", () => {
   describe("Anonymous user", () => {
     test("With case sensitive match", async () => {
-      const firstResponse = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          email: "case.sensitive@gsfzamai.dev.br",
-          password: "senha@123",
-          username: "gsfzamai",
-        } satisfies NewUserRequest),
+      const createdUser = await orchestrator.createUser({
+        username: "gsfzamai",
       });
-
-      expect(firstResponse.status).toBe(201);
 
       const secondResponse = await fetch(
         "http://localhost:3000/api/v1/users/gsfzamai",
@@ -33,7 +23,7 @@ describe("GET api/v1/users/[username]", () => {
       expect(secondResponse.status).toBe(200);
       expect(secondResponseBody).toEqual({
         created_at: secondResponseBody.created_at,
-        email: "case.sensitive@gsfzamai.dev.br",
+        email: createdUser.email,
         id: secondResponseBody.id,
         password: secondResponseBody.password,
         updated_at: secondResponseBody.updated_at,
@@ -42,20 +32,24 @@ describe("GET api/v1/users/[username]", () => {
     });
 
     test("With no case sensitive match", async () => {
-      const response = await fetch(
-        "http://localhost:3000/api/v1/users/GSFZamai",
+      const createdUser = await orchestrator.createUser({
+        username: "CaseMismatch",
+      });
+
+      const secondResponse = await fetch(
+        "http://localhost:3000/api/v1/users/casemismatch",
       );
 
-      const responseBody: User = await response.json();
+      const secondResponseBody: User = await secondResponse.json();
 
-      expect(response.status).toBe(200);
-      expect(responseBody).toEqual({
-        created_at: responseBody.created_at,
-        email: "case.sensitive@gsfzamai.dev.br",
-        id: responseBody.id,
-        password: responseBody.password,
-        updated_at: responseBody.updated_at,
-        username: "gsfzamai",
+      expect(secondResponse.status).toBe(200);
+      expect(secondResponseBody).toEqual({
+        created_at: secondResponseBody.created_at,
+        email: createdUser.email,
+        id: secondResponseBody.id,
+        password: secondResponseBody.password,
+        updated_at: secondResponseBody.updated_at,
+        username: "CaseMismatch",
       } satisfies User);
     });
 
