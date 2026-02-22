@@ -45,6 +45,32 @@ async function findByUsername(username: string): Promise<User> {
   }
 }
 
+async function findByEmail(email: string): Promise<User> {
+  const user = await findOneByEmail(email);
+  return user;
+  async function findOneByEmail(email: string) {
+    const result = await database.query<User>({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+      ;`,
+      values: [email],
+    });
+    if (result.rowCount === 0) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado para os dados informados.",
+        action: "Tente outro nome de usuário.",
+      });
+    }
+
+    return result.rows[0];
+  }
+}
+
 async function create(newUserRequest: NewUserRequest): Promise<User> {
   await verifyExistingEmail(newUserRequest.email);
   await verifyExistingUsername(newUserRequest.username);
@@ -160,6 +186,7 @@ async function hashPasswordInObject(newUserRequest: NewUserRequest) {
 const user = {
   create,
   findByUsername,
+  findByEmail,
   update,
 };
 
